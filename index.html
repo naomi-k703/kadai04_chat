@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>感情曲線</title>
+    
+    <!-- CSSファイルのリンク -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js CDNのリンク -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- ユーザー登録セクション -->
+    <div id="registerSection" class="container">
+        <h2>新規登録</h2>
+        <form id="registerForm">
+            <label for="username">ユーザー名:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">パスワード:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">登録</button>
+        </form>
+        <p>すでにアカウントをお持ちですか？<button id="showLoginForm">ログイン</button></p>
+    </div>
+
+    <!-- ログインセクション -->
+    <div id="loginSection" class="container" style="display: none;">
+        <h2>ログイン</h2>
+        <form id="loginForm">
+            <label for="loginUsername">ユーザー名:</label>
+            <input type="text" id="loginUsername" name="loginUsername" required>
+            <label for="loginPassword">パスワード:</label>
+            <input type="password" id="loginPassword" name="loginPassword" required>
+            <button type="submit">ログイン</button>
+        </form>
+        <p>アカウントをお持ちでないですか？<button id="showRegisterForm">新規登録</button></p>
+    </div>
+
+    <!-- 感情入力セクション -->
+    <div id="section1" class="container" style="display: none;">
+        <h1>感情曲線</h1>
+        <!-- 各入力フィールド -->
+        <div class="form-group">
+            <input type="number" id="age" placeholder="年齢" min="0" max="100">
+        </div>
+        <div class="form-group">
+            <select id="period">
+                <option value="">時期を選択</option>
+                <option value="幼児">幼児</option>
+                <option value="小学">小学</option>
+                <option value="中高">中高</option>
+                <option value="大学生（専門）">大学生（専門）</option>
+                <option value="社会人">社会人</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="text" id="event" placeholder="何が起きたか">
+        </div>
+        <div class="form-group">
+            <select id="emotionScore">
+                <option value="">感情の点数を選択</option>
+                <option value="-3">-3</option>
+                <option value="-2">-2</option>
+                <option value="-1">-1</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <select id="emotionText">
+                <option value="">感情を選択</option>
+                <option value="喜び">喜び</option>
+                <option value="怒り">怒り</option>
+                <option value="悔しさ">悔しさ</option>
+                <option value="悲しみ">悲しみ</option>
+                <option value="楽しい">楽しい</option>
+                <option value="嬉しい">嬉しい</option>
+            </select>
+        </div>
+        <!-- データ追加ボタン -->
+        <button id="addDataButton">データ追加</button>
+        <div id="graph"></div>
+    </div>
+
+    <!-- チャート表示セクション -->
+    <div id="chartSection" class="container" style="display: none;">
+        <h1>感情曲線チャート</h1>
+        <canvas id="emotionChart"></canvas>
+        <button class="toReview">次へ</button> <!-- 次のセクション（自己評価セクション）に遷移 -->
+    </div>
+
+    <!-- 自己評価セクション -->
+    <div id="reviewSection" class="container" style="display: none;">
+        <h2>自己評価と原動力の選択</h2>
+        <div class="form-group">
+            <label for="motivation">自分の力が引き出されるものは？</label>
+            <select id="motivation" multiple>
+                <option value="ビジョン">ビジョン</option>
+                <option value="クエストクリア">クエストクリア</option>
+                <option value="好きなもの">好きなもの</option>
+                <option value="貢献">貢献</option>
+                <option value="チームワーク">チームワーク</option>
+                <option value="責任・役割">責任・役割</option>
+                <option value="成長実感">成長実感</option>
+                <option value="競争・勝負">競争・勝負</option>
+                <option value="クラフト">クラフト</option>
+                <option value="好奇心">好奇心</option>
+                <option value="自律">自律</option>
+                <option value="報酬">報酬</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selfAssessment">自分のことで知っておいてほしいことは？</label>
+            <textarea id="selfAssessment" rows="4" placeholder="自分のことを自由に書いてください..."></textarea>
+        </div>
+        <button id="submitAssessmentButton">送信</button> <!-- 次のセクション（チーム全体の原動力チャート）に遷移 -->
+    </div>
+
+    <!-- チーム全体の原動力チャートセクション -->
+    <div id="teamMotivationChartSection" class="container" style="display: none;">
+        <h1>チーム全体の原動力</h1>
+        <canvas id="teamMotivationChart"></canvas>
+        <button class="toFeedback">次へ</button> <!-- 次のセクション（強みのフィードバック共有セクション）に遷移 -->
+    </div>
+
+    <!-- 強みのフィードバック共有セクション -->
+    <div id="feedbackSection" class="container" style="display: none;">
+        <h2>強みのフィードバックの共有</h2>
+        <p>他のメンバーの強みのフィードバックを共有しますか？</p>
+        <button id="shareFeedbackYes">はい</button>
+        <button id="shareFeedbackNo">いいえ</button>
+        <div id="sharedFeedbackArea" class="message-display"></div>
+    </div>
+
+    <!-- 記名/匿名選択セクション -->
+    <div id="nameChoiceSection" class="container" style="display: none;">
+        <h2>記名または匿名でフィードバックを共有</h2>
+        <p>記名でフィードバックを共有しますか？</p>
+        <button id="shareWithName">記名</button>
+        <button id="shareAnonymously">匿名</button>
+    </div>
+
+    <!-- フィードバック入力セクション -->
+    <div id="feedbackInputSection" class="container" style="display: none;">
+        <h2>フィードバック入力</h2>
+        <div class="form-group">
+            <label for="feedbackFrom">誰から:</label>
+            <input type="text" id="feedbackFrom" placeholder="あなたの名前">
+        </div>
+        <div class="form-group">
+            <label for="feedbackTo">誰へ:</label>
+            <input type="text" id="feedbackTo" placeholder="相手の名前">
+        </div>
+        <div class="form-group">
+            <label for="feedbackMessage">フィードバック:</label>
+            <textarea id="feedbackMessage" rows="5" placeholder="フィードバック内容を入力..."></textarea>
+        </div>
+        <button id="submitFeedbackButton">フィードバック送信</button> <!-- チャットセクションに遷移 -->
+    </div>
+
+    <!-- 強みフィードバック表示エリア -->
+    <div id="chatSection" class="container" style="display: none;">
+        <h2>強みフィードバック</h2>
+        <div id="messageDisplayArea" class="message-display"></div>
+        <input type="text" id="chatMessage" placeholder="メッセージを入力">
+        <button id="sendMessageButton">送信</button> <!-- メッセージを送信し、表示エリアに追加 -->
+    </div>
+
+    <!-- 遷移ボタン -->
+    <div class="button-group">
+        <button class="backtoSection" >前の画面に戻る</button>
+        <button id="NextToSection" >次へ</button>
+    </div>
+
+    <!-- 終了メッセージセクション -->
+    <div id="endSection" class="container" style="display: none;">
+        <h1>あなたのことを教えてくれて嬉しい！</h1>
+        <h1>ありがとう！</h1>
+    </div>
+
+    <!-- 遷移ボタン -->
+    <div class="button-group">
+        <a class="sample_btn toSection1" href="#">ログイン画面に戻る</a>
+        <a class="sample_btn backtoSection" href="#">前の画面に戻る</a>
+        <a class="sample_btn toSection2" href="#">次へ</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 診断サイト by Givin' Back Inc. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScriptファイルのリンク -->
+    <script type="module" src="script_20240901.js"></script>
+
+</body>
+</html>
